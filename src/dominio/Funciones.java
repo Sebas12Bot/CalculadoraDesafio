@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 public class Funciones {
 
+    private static final Calculadora calculadora = new Calculadora();
     static JCheckBox redondear = new JCheckBox("redondear");
     private static final Object[] OPCIONES = Arrays.asList("Sumar", "Restar", "Multiplicar", "Dividir", redondear).toArray();
     private static final int SUMAR = 0;
@@ -12,14 +13,34 @@ public class Funciones {
     private static final int MULTIPLICAR = 2;
     private static final int DIVIDIR = 3;
 
+    public static int preguntarCantidadNumeros() {
+        int cantidad = 0;
+        boolean cantidadValida = false;
+
+        do {
+            try {
+                cantidad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad de números que desea operar"));
+                if (cantidad > 0) {
+                    cantidadValida = true;
+                } else {
+                    mostrarError("La cantidad debe ser un número positivo");
+                }
+            } catch (NumberFormatException e) {
+                mostrarError("La entrada no es válida. Ingrese un número entero positivo.");
+            }
+        } while (!cantidadValida);
+
+        return cantidad;
+    }
+
     public static void realizarOperacion(int opcion, double num1, double num2) {
         switch (opcion) {
-            case SUMAR -> mostrarMensaje("La suma es ", Calculadora.sumar(num1, num2));
-            case RESTAR -> mostrarMensaje("La resta es ", Calculadora.restar(num1, num2));
-            case MULTIPLICAR -> mostrarMensaje("La multiplicación es ", Calculadora.multiplicacion(num1, num2));
+            case SUMAR -> mostrarMensaje("La suma es ", calculadora.sumar(num1, num2));
+            case RESTAR -> mostrarMensaje("La resta es ", calculadora.restar(num1, num2));
+            case MULTIPLICAR -> mostrarMensaje("La multiplicación es ", calculadora.multiplicacion(num1, num2));
             case DIVIDIR -> {
                 if (num2 != 0) {
-                    mostrarMensaje("La división es ", Calculadora.division(num1, num2));
+                    mostrarMensaje("La división es ", calculadora.division(num1, num2));
                 } else {
                     mostrarError("No se puede dividir entre cero");
                 }
@@ -32,18 +53,17 @@ public class Funciones {
     }
 
     public static void mostrarMensaje(String mensaje, double numero) {
-        String numeroRedondeadoyString = String.valueOf(numero);
         if (redondear.isSelected()) {
-            numeroRedondeadoyString = Calculadora.redondear(numero);
+            numero = Double.parseDouble(calculadora.redondear(numero));
         }
-        JOptionPane.showMessageDialog(null, mensaje + numeroRedondeadoyString, "Calculadora", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, mensaje + numero, "Calculadora", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static int mostrarMenu() {
         int opcion = JOptionPane.showOptionDialog(null, "¿Qué operación desea realizar?", "Calculadora", 0, JOptionPane.QUESTION_MESSAGE, null, OPCIONES, null);
 
         if (opcion == JOptionPane.CLOSED_OPTION) {
-            System.exit(opcion);
+            System.exit(0);
         }
         return opcion;
     }
@@ -58,7 +78,6 @@ public class Funciones {
                 numeroValido = true;
             } catch (NumberFormatException e) {
                 mostrarError("El número no es válido. Ingréselo nuevamente.");
-                e.printStackTrace();
             }
         } while (!numeroValido);
 
