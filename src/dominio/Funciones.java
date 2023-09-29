@@ -33,6 +33,37 @@ public class Funciones {
         return cantidad;
     }
 
+    public static double[] obtenerNumeros(int cantidadNumeros) {
+        double[] numeros = new double[cantidadNumeros];
+        for (int i = 0; i < cantidadNumeros; i++) {
+            numeros[i] = recibirNumero("Ingrese el número " + (i + 1));
+        }
+        return numeros;
+    }
+
+    public static void realizarOperacionYMostrarResultado(int opcion, Calculadora calculadora, double[] numeros) {
+        double resultado = numeros[0];
+        try {
+            for (int i = 1; i < numeros.length; i++) {
+                switch (opcion) {
+                    case SUMAR -> resultado = calculadora.sumar(resultado, numeros[i]);
+                    case RESTAR -> resultado = calculadora.restar(resultado, numeros[i]);
+                    case MULTIPLICAR -> resultado = calculadora.multiplicacion(resultado, numeros[i]);
+                    case DIVIDIR -> {
+                        if (numeros[i] != 0) {
+                            resultado = calculadora.division(resultado, numeros[i]);
+                        } else {
+                            throw new ArithmeticException("No se puede dividir entre cero");
+                        }
+                    }
+                }
+            }
+            mostrarMensaje("El resultado es ", resultado);
+        } catch (ArithmeticException e) {
+            mostrarError("Error: " + e.getMessage());
+        }
+    }
+
     public static void realizarOperacion(int opcion, double num1, double num2) {
         switch (opcion) {
             case SUMAR -> mostrarMensaje("La suma es ", calculadora.sumar(num1, num2));
